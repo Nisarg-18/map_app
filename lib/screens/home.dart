@@ -74,6 +74,14 @@ class _HomeState extends State<Home> {
         body: isLoading
             ? const Center(child: CircularProgressIndicator())
             : Stack(children: [
+                Text('Latitude: ${currentPosition!.latitude}'),
+                const SizedBox(
+                  height: 5,
+                ),
+                Text('Longitude: ${currentPosition!.longitude}'),
+                const SizedBox(
+                  height: 5,
+                ),
                 Padding(
                   padding: const EdgeInsets.all(8),
                   child: FlutterMap(
