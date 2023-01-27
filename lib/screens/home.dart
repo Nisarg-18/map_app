@@ -18,7 +18,7 @@ class Home extends StatefulWidget {
 class _HomeState extends State<Home> {
   late final MapController _mapController;
 
-  CustomPoint _textPos = const CustomPoint(10.0, 10.0);
+  CustomPoint textPos = const CustomPoint(10.0, 10.0);
   Position? currentPosition;
   bool isLoading = true;
   SnackBar errorSnackBar = const SnackBar(
@@ -73,47 +73,53 @@ class _HomeState extends State<Home> {
         appBar: AppBar(title: const Text('Current Location')),
         body: isLoading
             ? const Center(child: CircularProgressIndicator())
-            : Stack(children: [
-                Text('Latitude: ${currentPosition!.latitude}'),
-                const SizedBox(
-                  height: 5,
-                ),
-                Text('Longitude: ${currentPosition!.longitude}'),
-                const SizedBox(
-                  height: 5,
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(8),
-                  child: FlutterMap(
-                    mapController: _mapController,
-                    options: MapOptions(
-                      onMapEvent: onMapEvent,
-                      onTap: (tapPos, latLng) {
-                        final pt1 = _mapController.latLngToScreenPoint(latLng);
-                        _textPos = CustomPoint(pt1!.x, pt1.y);
-                        setState(() {});
-                      },
-                      center: LatLng(currentPosition!.latitude,
-                          currentPosition!.longitude),
-                      zoom: 11,
-                      rotation: 0,
+            : SingleChildScrollView(
+                child: Column(
+                  children: [
+                    const SizedBox(
+                      height: 10,
                     ),
-                    children: [
-                      TileLayer(
-                        urlTemplate:
-                            'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
-                        userAgentPackageName:
-                            'dev.fleaflet.flutter_map.example',
+                    Text('Latitude: ${currentPosition!.latitude.toString()}'),
+                    const SizedBox(
+                      height: 5,
+                    ),
+                    Text('Longitude: ${currentPosition!.longitude.toString()}'),
+                    const SizedBox(
+                      height: 5,
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.all(8),
+                      child: SizedBox(
+                        height: 550,
+                        width: MediaQuery.of(context).size.width,
+                        child: FlutterMap(
+                          mapController: _mapController,
+                          options: MapOptions(
+                            onMapEvent: onMapEvent,
+                            onTap: (tapPos, latLng) {
+                              final pt1 =
+                                  _mapController.latLngToScreenPoint(latLng);
+                              textPos = CustomPoint(pt1!.x, pt1.y);
+                              setState(() {});
+                            },
+                            center: LatLng(currentPosition!.latitude,
+                                currentPosition!.longitude),
+                            zoom: 11,
+                            rotation: 0,
+                          ),
+                          children: [
+                            TileLayer(
+                              urlTemplate:
+                                  'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+                              userAgentPackageName:
+                                  'dev.fleaflet.flutter_map.example',
+                            ),
+                          ],
+                        ),
                       ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
-                Positioned(
-                    left: _textPos.x.toDouble(),
-                    top: _textPos.y.toDouble(),
-                    width: 20,
-                    height: 20,
-                    child: const FlutterLogo())
-              ]));
+              ));
   }
 }
